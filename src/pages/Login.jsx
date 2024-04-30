@@ -2,15 +2,12 @@ import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../hooks";
 import axios from "../api/axios";
 import { jwtDecode } from "jwt-decode";
-import { useCookies } from "react-cookie";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const Login = () => {
   const { setAuth, setIsLoggedIn, persist, setPersist } = useAuth();
   const userRef = useRef();
   const errRef = useRef();
-
-  const [cookies, setCookie] = useCookies(["userCookie"]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -37,23 +34,26 @@ const Login = () => {
         },
         {
           headers: { "Content-Type": "application/json" },
+          // withCredentials: true,
         }
       );
 
       // Set token cookie
-      setCookie("userCookie", JSON.stringify(response?.data?.result?.token));
+      localStorage.setItem("token", response?.data?.result?.token);
 
       // Decode token
       const accessToken = response?.data?.result?.token;
       const decodedToken = jwtDecode(accessToken); // Correct usage of jwtDecode
       console.log(decodedToken);
-
+      console.log(accessToken);
       // Set authentication state
-      setAuth({ username, password, accessToken });
+      const authData = { username: userName, accessToken };
+      setAuth(authData);
       setPassword("");
       setUserName("");
       setIsLoggedIn(true);
       navigate(from, { replace: true }); // Redirect after successful login
+      navigate("/dashboard");
     } catch (err) {
       console.error("Login error:", err);
       setIsLoggedIn(false); // Ensure user is not logged in on login failure

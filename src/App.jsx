@@ -27,8 +27,15 @@ const App = () => {
           <Route element={<PersistLogin />}>
             <Route element={<RequireAuth />}>
               {privateRoutes.map((route, index) => {
-                let Layout = route.layout === null ? Fragment : DefaultLayout;
                 let Page = route.component;
+
+                let Layout = DefaultLayout;
+
+                if (route.layout) {
+                  Layout = route.layout;
+                } else if (route.layout === null) {
+                  Layout = Fragment;
+                }
                 return (
                   <Route
                     key={index}

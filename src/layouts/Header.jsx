@@ -1,82 +1,46 @@
 import { useState } from "react";
 import { useCookies } from "react-cookie";
 import { Link } from "react-router-dom";
-import { useAuth } from "../hooks";
+import { useAuth, useRefreshToken } from "../hooks";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import axios from "../api/axios";
+import images from "../assets/images";
 
 const Header = () => {
   const { auth, accessToken } = useAuth();
-  const [cookies, setCookie, removeCookie] = useCookies(["userCookie"]);
   const [activeLink, setActiveLink] = useState("");
-
+  const refresh = useRefreshToken();
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post(
         "https://comic.pantech.vn/api/auth/logout",
         {
-          token: `${auth.accessToken}`,
+          token: `${auth?.accessToken}`,
         },
         {
           headers: { "Content-Type": "application/json" },
         }
       );
-      removeCookie("userCookie");
-      // history.push("/");
+      localStorage.clear();
       window.location.reload();
     } catch (err) {
       console.error("Log out error:", err);
     }
   };
   return (
-    <div>
-      <ul>
-        <li>
-          <form onSubmit={handleSubmit}>
-            <button
-              className="focus:ring transform transition hover:scale-105 duration-300 ease-in-out cursor-pointer w-full text-left"
-              type="submit"
-            >
-              <i className="fa-solid fa-arrow-right-from-bracket mr-3 text-red-800"></i>
-              Log out
-            </button>
-          </form>
-        </li>
-        <li>
-          <Link to={`/user`}>
-            <button
-              className="mt-4 focus:ring transform transition hover:scale-105 duration-300 ease-in-out cursor-pointer w-full text-left focus:bg-blue-500"
-              type="submit"
-              onClick={() => setActiveLink("/user")}
-            >
-              <i className="fa-solid fa-arrow-right-from-bracket mr-3 text-red-800"></i>
-              user
-            </button>
-          </Link>
-        </li>
-        <li>
-          <Link to={`/comment`}>
-            <button
-              className="mt-4 focus:ring transform transition hover:scale-105 duration-300 ease-in-out cursor-pointer w-full text-left focus:bg-blue-500"
-              type="submit"
-            >
-              <i className="fa-solid fa-arrow-right-from-bracket mr-3 text-red-800"></i>
-              comment
-            </button>
-          </Link>
-        </li>
-        <li>
-          <Link to={`/comic`}>
-            <button
-              className="mt-4 focus:ring transform transition hover:scale-105 duration-300 ease-in-out cursor-pointer w-full text-left focus:bg-blue-500"
-              type="submit"
-            >
-              <i className="fa-solid fa-arrow-right-from-bracket mr-3 text-red-800"></i>
-              comic
-            </button>
-          </Link>
-        </li>
-      </ul>
+    <div className="bg-white h-16 px-4 flex justify-between items-center">
+      <div>
+        <FontAwesomeIcon icon={faSearch} />{" "}
+        <input
+          type="text"
+          placeholder="Search..."
+          className="text-sm focus:outline-none active:outline-none border-none bg-gray-100 rounded-md p-3 w-96"
+        />
+      </div>
+      <div>SideButton</div>
     </div>
   );
 };

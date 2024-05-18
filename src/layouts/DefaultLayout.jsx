@@ -5,7 +5,7 @@ const DefaultLayout = ({ children }) => {
   return (
     <div className="flex flex-row bg-neutral-100 h-screen w-screen overflow-hidden">
       <SideBar />
-      <div className="w-full h-auto">
+      <div className="w-full h-screen">
         <Header />
         <div>{children}</div>
       </div>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://comic.pantech.vn";
+const BASE_URL = "http://comic.pantech.vn:8080";
 
 export default axios.create({
   baseURL: BASE_URL,
@@ -9,5 +9,5 @@ export default axios.create({
 export const axiosPrivate = axios.create({
   baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
-  withCredentials: true,
+  // withCredentials: true,
 });

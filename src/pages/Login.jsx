@@ -3,7 +3,7 @@ import { useAuth } from "../hooks";
 import axios from "../api/axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate, useLocation } from "react-router-dom";
-
+import images from "../assets/images";
 const Login = () => {
   const { setAuth, setIsLoggedIn, persist, setPersist } = useAuth();
   const userRef = useRef();
@@ -27,7 +27,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://comic.pantech.vn/api/auth/login",
+        "http://comic.pantech.vn:8080/api/auth/login",
         {
           username: userName,
           password: password,
@@ -45,6 +45,7 @@ const Login = () => {
       const accessToken = response?.data?.result?.token;
       const decodedToken = jwtDecode(accessToken); // Correct usage of jwtDecode
       console.log(decodedToken);
+      console.log(decodedToken?.sub);
       console.log(accessToken);
       // Set authentication state
       const authData = { username: userName, accessToken };
@@ -53,7 +54,11 @@ const Login = () => {
       setUserName("");
       setIsLoggedIn(true);
       navigate(from, { replace: true }); // Redirect after successful login
-      navigate("/dashboard");
+      decodedToken?.sub === "admin"
+        ? navigate("/dashboard")
+        : navigate("/unauthorized") &&
+          localStorage.removeItem("token", response?.data?.result?.token) &&
+          setIsLoggedIn(false);
     } catch (err) {
       console.error("Login error:", err);
       setIsLoggedIn(false); // Ensure user is not logged in on login failure
@@ -61,36 +66,73 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form onSubmit={handleSubmit}>
-        <div className="flex flex-col justify-center items-center py-20 shadow-lg border-1">
-          <label htmlFor="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            autoComplete="off"
-            value={userName}
-            onChange={(e) => {
-              setUserName(e.target.value);
-            }}
-          />
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-          />
-          <button type="submit">Login</button>
-          <div className="">
-            <input type="checkbox" id="persist" onChange={togglePersist} />
-            <label htmlFor="persist">Remember me</label>
+        <div className="relative flex flex-col m-6 space-y-8 bg-white shadow-2xl rounded-2xl md:flex-row md:space-y-0">
+          <div className="flex flex-col justify-center p-8">
+            <h1 className="text-3xl font-bold text-center">
+              {" "}
+              WELCOME BACK, Please Login
+            </h1>
+            <label htmlFor="username" className="mb-2 text-md">
+              Username
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              autoComplete="off"
+              value={userName}
+              onChange={(e) => {
+                setUserName(e.target.value);
+              }}
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            />
+            <label htmlFor="password" className="mb-2 text-md">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+            />
+            <div className="flex justify-between w-full py-4">
+              <div className="mr-24">
+                <input
+                  type="checkbox"
+                  id="persist"
+                  onChange={togglePersist}
+                  className="mr-2"
+                />
+                <label htmlFor="persist" className="text-md">
+                  Remember me
+                </label>
+              </div>
+            </div>{" "}
+            <div className="w-full bg-black text-white text-center mb-6  p-3 rounded-md hover:text-black hover:bg-white hover:border hover:border-gray-300">
+              <button type="submit" className="w-full">
+                Login
+              </button>
+            </div>
           </div>
-          <div className="flex flex-row gap-2"></div>
+          <div className="relative">
+            <div
+              className="w-[400px] h-full hidden rounded-r-2xl md:block bg-cover bg-center bg-no-repeat"
+              style={{ backgroundImage: `url(${images.batman})` }}
+            ></div>
+            <div className="absolute hidden bottom-10 m-3 p-6 bg-white bg-opacity-30 backdrop-blur-sm rounded drop-shadow-lg md:block">
+              <span className="text-black text-xl">
+                {" "}
+                Comics as a way to relieve stress, and now it’s become my
+                biggest passion
+              </span>
+            </div>
+          </div>
         </div>
       </form>
     </div>

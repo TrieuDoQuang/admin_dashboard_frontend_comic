@@ -1,43 +1,48 @@
 import axios from "../api/axios";
 import useAuth from "./useAuth";
-import { useCookies } from "react-cookie";
+import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
 const useRefreshToken = () => {
-  const { auth, setAuth, setIsLoggedIn, persist, isLoggedIn, accessToken } =
-    useAuth();
-  const storedToken = localStorage.getItem("token") || auth?.accessToken;
+  const { auth, setAuth } = useAuth();
+  const [isTokenExpired, setIsTokenExpired] = useState(false);
 
-  // Ensure that a valid token is available before attempting to decode it
-  const token = typeof storedToken === "string" ? storedToken : "";
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token") || auth?.accessToken;
+    const token = typeof storedToken === "string" ? storedToken : "";
 
-  if (token) {
-    const decoded = jwtDecode(token);
-    const now = Date.now() / 1000;
-    const timeRemaining = decoded.exp - now;
-    const isTokenExpired = timeRemaining < 3600;
+    if (token) {
+      const decoded = jwtDecode(token);
+      const now = Date.now() / 1000;
+      const timeRemaining = decoded.exp - now;
 
-    if (isTokenExpired) {
-      try {
-        const refreshToken = async () => {
-          const response = await axios.post(
-            "api/auth/refresh",
-            {
-              token: token,
-            }
-            // { withCredentials: true }
-          );
-          setAuth((prev) => {
-            console.log("Refreshed token:", response.data.result.token);
-            return { ...prev, accessToken: response.data.result.token };
-          });
-        };
-        return refreshToken;
-      } catch (error) {
-        console.error("Error refreshing token:", error);
+      if (timeRemaining < 3600) {
+        setIsTokenExpired(true);
       }
     }
-  }
+  }, [auth]);
+
+  useEffect(() => {
+    if (isTokenExpired) {
+      const refreshToken = async () => {
+        try {
+          const response = await axios.post("api/auth/refresh", {
+            token: auth?.accessToken,
+          });
+          setAuth((prev) => ({
+            ...prev,
+            accessToken: response.data.result.token,
+          }));
+        } catch (error) {
+          console.error("Error refreshing token:", error);
+        }
+        return auth?.accessToken;
+      };
+      refreshToken();
+    }
+  }, [isTokenExpired, auth, setAuth]);
+
+  return null;
 };
 
 export default useRefreshToken;

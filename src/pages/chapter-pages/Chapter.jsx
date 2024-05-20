@@ -1,10 +1,18 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Button } from "../../components";
+import { Button, PostChapter, PostChapterImage } from "../../components";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "../../api/axios";
+import { useAxiosPrivate } from "../../hooks";
 const Chapter = () => {
   const [chapters, setChapters] = useState([]);
+  const [isInsertChapter, setIsInsertChapter] = useState(false);
+  const [isInsertChapterImage, setIsInsertChapterImage] = useState(false);
+  const [selectedChapterId, setSelectedChapterId] = useState(null);
+
   const { comicId } = useParams();
+  const axiosPrivate = useAxiosPrivate();
   const fetchChapters = async () => {
     try {
       const response = await axios.get(
@@ -17,15 +25,48 @@ const Chapter = () => {
       console.error("Error fetching chapters:", error);
     }
   };
+
   useEffect(() => {
     fetchChapters();
   }, []);
 
+  const handleDelete = async (id) => {
+    try {
+      await axiosPrivate.delete(
+        `http://comic.pantech.vn:8080/api/chapter/deleteChapter/${id}`
+      );
+      console.log("Chapter deleted successfully!");
+      fetchChapters();
+    } catch (error) {
+      console.error("Error deleting chapter:", error);
+    }
+  };
+
+  const handleInsertChapterImage = (chapterId) => {
+    setSelectedChapterId(chapterId);
+    setIsInsertChapterImage(true);
+  };
+
+  const handleDeleteChapterImage = async (chapterId) => {
+    try {
+      await axiosPrivate.delete(
+        `http://comic.pantech.vn:8080/api/image/deleteChapterImages/${chapterId}`
+      );
+      console.log("Chapter image deleted successfully!");
+      fetchChapters();
+    } catch (error) {
+      console.error("Error deleting chapter image:", error);
+    }
+  };
+
   return (
     <div>
-      <Button content={"Add Chapter"} />
+      <Button
+        content={"Add Chapter"}
+        onClick={() => setIsInsertChapter(true)}
+      />
 
-      <div className="relative overflow-x-auto overflow-auto max-h-screen shadow-md sm:rounded-lg">
+      <div className="relative  max-h-screen shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase  bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
             <tr>
@@ -67,11 +108,24 @@ const Chapter = () => {
                     <button className="font-medium  hover:text-white text-green-400">
                       Edit
                     </button>
-                    <button className="font-medium hover:text-white text-green-400">
+
+                    <button
+                      className="font-medium hover:text-white text-green-400"
+                      onClick={() => handleDelete(chapter.id)}
+                    >
+                      Delete
+                    </button>
+                    <button
+                      className="font-medium hover:text-white text-green-400"
+                      onClick={() => handleInsertChapterImage(chapter.id)}
+                    >
                       Insert chapter image
                     </button>
-                    <button className="font-medium hover:text-white text-green-400">
-                      Delete
+                    <button
+                      className="font-medium hover:text-white text-green-400"
+                      onClick={() => handleDeleteChapterImage(chapter.id)}
+                    >
+                      Delete chapter image
                     </button>
                   </td>
                 </tr>
@@ -79,6 +133,41 @@ const Chapter = () => {
           </tbody>
         </table>
       </div>
+      {isInsertChapter && (
+        <div className="fixed z-9999 inset-0 bg-opacity-50 bg-black">
+          <PostChapter
+            comicId={comicId}
+            setIsInsertChapter={setIsInsertChapter}
+            fetchChapters={fetchChapters}
+          />
+          <div
+            className="fixed top-5 right-10 text-2xl font-bold text-[#fff] cursor-pointer hover:text-red-700"
+            onClick={() => {
+              setIsInsertChapter(false);
+            }}
+          >
+            <FontAwesomeIcon icon={faTimes} />
+          </div>
+        </div>
+      )}
+
+      {isInsertChapterImage && (
+        <div className="fixed z-9999 inset-0 bg-opacity-50 bg-black">
+          <PostChapterImage
+            chapterId={selectedChapterId}
+            setIsInsertChapterImage={setIsInsertChapterImage}
+            fetchChapters={fetchChapters}
+          />
+          <div
+            className="fixed top-5 right-10 text-2xl font-bold text-[#fff] cursor-pointer hover:text-red-700"
+            onClick={() => {
+              setIsInsertChapterImage(false);
+            }}
+          >
+            <FontAwesomeIcon icon={faTimes} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

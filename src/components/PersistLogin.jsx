@@ -2,7 +2,6 @@ import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks";
 import { jwtDecode } from "jwt-decode";
-import { useCookies } from "react-cookie";
 import { useRefreshToken } from "../hooks";
 
 const PersistLogin = () => {
@@ -10,8 +9,8 @@ const PersistLogin = () => {
   const { auth, setAuth, setIsLoggedIn, persist, isLoggedIn } = useAuth();
   const refresh = useRefreshToken();
 
-  useEffect(() => { 
-    let isMounted = true;
+  useEffect(() => {
+    let persist = true;
 
     const verifyRefreshToken = async () => {
       try {
@@ -19,13 +18,13 @@ const PersistLogin = () => {
       } catch (err) {
         console.error(err);
       } finally {
-        isMounted && setIsLoading(false);
+        persist && setIsLoading(false);
       }
     };
 
     !auth?.accessToken && persist ? verifyRefreshToken() : setIsLoading(false);
 
-    return () => (isMounted = false);
+    return () => (persist = false);
   }, []);
 
   return (

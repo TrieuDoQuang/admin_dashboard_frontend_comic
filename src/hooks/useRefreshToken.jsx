@@ -1,3 +1,5 @@
+// src/hooks/useRefreshToken.jsx
+
 import axios from "../api/axios";
 import useAuth from "./useAuth";
 import { useEffect, useState } from "react";
@@ -22,27 +24,28 @@ const useRefreshToken = () => {
     }
   }, [auth]);
 
-  useEffect(() => {
+  const refreshToken = async () => {
     if (isTokenExpired) {
-      const refreshToken = async () => {
-        try {
-          const response = await axios.post("api/auth/refresh", {
-            token: auth?.accessToken,
-          });
-          setAuth((prev) => ({
-            ...prev,
-            accessToken: response.data.result.token,
-          }));
-        } catch (error) {
-          console.error("Error refreshing token:", error);
-        }
-        return auth?.accessToken;
-      };
-      refreshToken();
+      try {
+        const response = await axios.post("api/auth/refresh", {
+          token: auth?.accessToken,
+        });
+        setAuth((prev) => ({
+          ...prev,
+          accessToken: response.data.result.token,
+        }));
+      } catch (error) {
+        console.error("Error refreshing token:", error);
+      }
+      return auth?.accessToken;
     }
+  };
+
+  useEffect(() => {
+    refreshToken();
   }, [isTokenExpired, auth, setAuth]);
 
-  return null;
+  return refreshToken;
 };
 
 export default useRefreshToken;

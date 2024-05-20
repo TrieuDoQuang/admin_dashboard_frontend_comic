@@ -1,18 +1,24 @@
 import { useState, useEffect } from "react";
 import axios from "../../api/axios";
+import { useAxiosPrivate } from "../../hooks";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "../../components";
-import { PostComic } from "../../components";
+import { Button, Notification, PostComic } from "../../components";
+import { Link } from "react-router-dom";
 const Comic = () => {
+  const axiosPrivate = useAxiosPrivate();
   const [comics, setComics] = useState([]);
   const [isInsertComic, setIsInsertComic] = useState(false);
-  const [isEditComic, setIsEditComic] = useState(false);
-  console.log(isInsertComic);
+  const [isSuccess, setIsSuccess] = useState(null);
+  const [notificationMessage, setNotificationMessage] = useState("");
+
   const fetchComics = async () => {
     try {
-      const response = await axios.get("/api/comic/getAllComics");
+      const response = await axios.get(
+        "http://comic.pantech.vn:8080/api/comic/getAllComics"
+      );
       const data = response?.data?.result;
+
       console.log(data);
       setComics(data);
     } catch (error) {
@@ -20,20 +26,36 @@ const Comic = () => {
     }
   };
 
-  const handleInsertComic = () => {
-    setIsInsertComic(true);
-    fetchComics();
-  };
   useEffect(() => {
     fetchComics();
   }, []);
 
+  const handleInsertComic = () => {
+    setIsInsertComic(true);
+    fetchComics();
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axiosPrivate.delete(
+        `http://comic.pantech.vn:8080/api/comic/deleteComic/${id}`
+      );
+      setIsSuccess(true);
+      setNotificationMessage("Comic deleted successfully!");
+      fetchComics();
+    } catch (error) {
+      setIsSuccess(false);
+      setNotificationMessage("Failed to delete comic.");
+      console.error("Error deleting comic:", error);
+    }
+  };
+
   return (
-    <div className="">
-      <Button content={"Add Comic"} onClick={() => handleInsertComic()} />
-      <div className="relative overflow-x-auto overflow-auto max-h-screen shadow-md sm:rounded-lg">
+    <div>
+      <Button content={"Add Comic"} onClick={handleInsertComic} />
+      <div className="relative max-h-screen shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase  bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
             <tr>
               <th scope="col" className="px-6 py-3 font-bold text-white">
                 Name
@@ -99,14 +121,19 @@ const Comic = () => {
                   <td className="px-6 py-4">
                     {comic.finished ? "Finished" : "Not Finished"}
                   </td>
-                  <td className="px-6 py-4 flex flex-col justify-between gap-4  text-right">
-                    <button className="font-medium  hover:text-white text-green-400">
+                  <td className="px-6 py-4 flex flex-col justify-between gap-4 text-right">
+                    <button className="font-medium hover:text-white text-green-400">
                       Edit
                     </button>
-                    <button className="font-medium hover:text-white text-green-400">
-                      Go to chapter
-                    </button>
-                    <button className="font-medium hover:text-white text-green-400">
+                    <Link to={`/comic/${comic.name}/chapter/${comic.id}`}>
+                      <button className="font-medium hover:text-white text-green-400">
+                        Go to chapter
+                      </button>
+                    </Link>
+                    <button
+                      className="font-medium hover:text-white text-green-400"
+                      onClick={() => handleDelete(comic.id)}
+                    >
                       Delete
                     </button>
                   </td>
@@ -117,7 +144,12 @@ const Comic = () => {
       </div>
       {isInsertComic && (
         <div className="fixed z-1000 inset-0 bg-opacity-50 bg-black">
-          <PostComic setIsInsertComic={setIsInsertComic} />
+          <PostComic
+            setIsInsertComic={setIsInsertComic}
+            setIsSuccess={setIsSuccess}
+            setNotificationMessage={setNotificationMessage}
+            fetchComics={fetchComics}
+          />
           <div
             className="fixed top-5 right-10 text-2xl font-bold text-[#fff] cursor-pointer hover:text-red-700"
             onClick={() => {
@@ -127,6 +159,13 @@ const Comic = () => {
             <FontAwesomeIcon icon={faTimes} />
           </div>
         </div>
+      )}
+
+      {notificationMessage && (
+        <Notification
+          successMessage={isSuccess ? notificationMessage : null}
+          errorMessage={!isSuccess ? notificationMessage : null}
+        />
       )}
     </div>
   );

@@ -3,6 +3,9 @@ import { useAuth } from "../hooks";
 import { jwtDecode } from "jwt-decode";
 
 const RequireAuth = () => {
+  const { auth, isLoggedIn } = useAuth();
+  const location = useLocation();
+
   const isTokenExpired = () => {
     try {
       const decoded = jwtDecode(auth?.accessToken);
@@ -11,9 +14,7 @@ const RequireAuth = () => {
       return true;
     }
   };
-  const { auth } = useAuth();
-  const location = useLocation();
-  return auth?.accessToken && isTokenExpired ? (
+  return isLoggedIn && !isTokenExpired() ? (
     <Outlet />
   ) : (
     <Navigate to="/login" state={{ from: location }} replace />

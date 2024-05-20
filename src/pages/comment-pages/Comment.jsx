@@ -27,9 +27,8 @@ const Comment = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axiosPrivate.post(
-        `http://comic.pantech.vn:8080/api/comment/deleteComment`,
-        { commentId: id }
+      await axiosPrivate.delete(
+        `http://comic.pantech.vn:8080/api/comment/deleteComment/${id}`
       );
       console.log("Comment deleted successfully!");
       fetchComments();
@@ -40,7 +39,7 @@ const Comment = () => {
 
   return (
     <div>
-      <div className="relative overflow-x-auto overflow-auto max-h-screen shadow-md sm:rounded-lg">
+      <div className="relative  max-h-screen shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase  bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
             <tr>
@@ -74,7 +73,9 @@ const Comment = () => {
                   >
                     {comment.fullName}
                   </th>
-                  <td className="px-6 py-4">{comment.content}</td>
+                  <td className="px-6 py-4 text-white font-bold">
+                    {comment.content}
+                  </td>
                   <td className="px-6 py-4">{comment.createdAt}</td>
                   <td className="px-6 py-4">{comment.chapterId}</td>
                   <td className="px-6 py-4 text-right">

@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
   );
 
   useEffect(() => {
+    // localStorage.setItem("auth", JSON.stringify(auth));
     localStorage.setItem("isLoggedIn", JSON.stringify(isLoggedIn));
     localStorage.setItem("persist", JSON.stringify(persist));
   }, [isLoggedIn, persist]);

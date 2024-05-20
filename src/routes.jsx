@@ -37,7 +37,7 @@ const privateRoutes = [
     component: Comic,
   },
   {
-    path: "/chapter/:comicId",
+    path: "/comic/:name/chapter/:comicId",
     component: Chapter,
   },
   {

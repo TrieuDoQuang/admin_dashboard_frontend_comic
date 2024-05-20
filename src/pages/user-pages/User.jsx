@@ -26,7 +26,7 @@ const User = () => {
     <div className="overflow-y: scroll">
       <Button content={"Add User"} />
 
-      <div className="relative overflow-x-auto overflow-auto max-h-screen shadow-md sm:rounded-lg">
+      <div className="relative max-h-screen shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase  bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
             <tr>
@@ -42,10 +42,10 @@ const User = () => {
               <th scope="col" className="px-6 py-3 text-white">
                 Gender
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 text-white">
                 Role
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="px-6 py-3 text-white">
                 Username
               </th>
               <th scope="col" className="px-6 py-3">

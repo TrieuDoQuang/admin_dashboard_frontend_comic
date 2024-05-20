@@ -9,9 +9,9 @@ const ComicItem = ({ comics }) => {
       {comics &&
         comics.map((comic) => (
           <Link
-            to={`/chapter/${comic.id}`}
+            to={`/comic/${comic.name}/chapter/${comic.id}`}
             key={comic.id}
-            className="w-full border-2 rounded-lg p-4  shadow-sm gap-2"
+            className="w-full border-2 rounded-lg p-4 shadow-sm gap-2"
           >
             <div
               className="w-80 h-80 bg-contain bg-no-repeat bg-center rounded-sm"

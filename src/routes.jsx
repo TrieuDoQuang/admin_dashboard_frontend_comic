@@ -1,5 +1,3 @@
-import { DefaultLayout } from "./layouts";
-import { ComicItem } from "./components";
 import {
   Login,
   Comment,
@@ -8,6 +6,7 @@ import {
   Chapter,
   Unauthorized,
   DashBoard,
+  Genre,
 } from "./pages";
 const publicRoutes = [
   { path: "/login", component: Login, layout: null },
@@ -43,6 +42,10 @@ const privateRoutes = [
   {
     path: "/user",
     component: User,
+  },
+  {
+    path: "/genre",
+    component: Genre,
   },
 ];
 

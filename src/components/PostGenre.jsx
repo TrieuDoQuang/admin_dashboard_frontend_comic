@@ -1,44 +1,48 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAxiosPrivate } from "../hooks";
-const UpdateChapter = ({
-  chapter,
-  setIsUpdateChapter,
-  fetchChapters,
-  comicId,
+const PostGenre = ({
+  setIsInsertGenre,
+  fetchGenres,
   setIsSuccess,
   setNotificationMessage,
 }) => {
+  const [genre, setGenre] = useState({
+    name: "",
+    description: "",
+  });
+
   const axiosPrivate = useAxiosPrivate();
-  const [chapterUpdate, setChapterUpdate] = useState(chapter);
-  console.log(chapterUpdate);
-  console.log(comicId);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setGenre({
+      ...genre,
+      [name]: value,
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axiosPrivate.put(
-        `http://comic.pantech.vn:8080/api/chapter/editChapter/${chapterUpdate.id}`,
+      await axiosPrivate.post(
+        "http://comic.pantech.vn:8080/api/genre/addNewGenre",
         {
-          title: chapterUpdate.title,
-          chapterNumber: chapterUpdate.chapterNumber,
+          name: genre.name,
+          genreDescription: genre.description,
         }
       );
-      setIsUpdateChapter(false);
-      fetchChapters();
+      setGenre({
+        name: "",
+        description: "",
+      });
+      setIsInsertGenre(false);
+      fetchGenres();
       setIsSuccess(true);
-      setNotificationMessage("Chapter updated successfully!");
+      setNotificationMessage("Genre inserted successfully!");
     } catch (error) {
-      console.error("Error updating chapter:", error);
+      console.error("Error inserting genre:", error);
       setIsSuccess(false);
-      setNotificationMessage("Failed to update chapter.");
+      setNotificationMessage("Failed to insert genre.");
     }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setChapterUpdate({
-      ...chapterUpdate,
-      [name]: value,
-    });
   };
   return (
     <>
@@ -48,15 +52,15 @@ const UpdateChapter = ({
           className="max-w-md mx-auto p-5 rounded border-2 shadow-lg bg-white"
         >
           <h1 className="py-3 text-center text-2xl uppercase text-green-500">
-            Update Chapter
+            Add Genre
           </h1>
           <div className="relative z-0 w-full mb-5 group">
             <input
               type="text"
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-black dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              name="title"
-              value={chapterUpdate.title}
-              id="chapterTitle"
+              name="name"
+              value={genre.name}
+              id="name"
               placeholder=""
               required
               onChange={handleChange}
@@ -65,43 +69,26 @@ const UpdateChapter = ({
               htmlFor="name"
               className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
             >
-              Chapter Title
+              Genre Name
             </label>
           </div>
+
           <div className="relative z-0 w-full mb-5 group">
-            <input
-              type="number"
-              name="chapterNumber"
+            <textarea
+              type="text"
+              name="description"
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-black dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              value={chapterUpdate.chapterNumber}
-              id="chapterNumber"
+              value={genre.description}
+              id="description"
               placeholder=""
-              min={1}
               required
               onChange={handleChange}
             />
             <label
-              htmlFor="author"
+              htmlFor="description"
               className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
             >
-              Chapter Number
-            </label>
-          </div>
-          <div className="relative z-0 w-full mb-5 group">
-            <input
-              type="text"
-              name="comicId"
-              className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-black dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              value={comicId}
-              id="comicId"
-              placeholder=""
-              readOnly
-            />
-            <label
-              htmlFor="author"
-              className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-            >
-              Comic Id
+              Description
             </label>
           </div>
           <div className="flex flex-row-reverse space-x-4 space-x-reverse">
@@ -118,4 +105,4 @@ const UpdateChapter = ({
   );
 };
 
-export default UpdateChapter;
+export default PostGenre;

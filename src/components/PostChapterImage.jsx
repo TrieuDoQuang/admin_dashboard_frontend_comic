@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 import { useAxiosPrivate } from "../hooks";
-const PostChapterImage = ({ chapterId, setIsInsertChapterImage }) => {
+const PostChapterImage = ({
+  chapterId,
+  setIsInsertChapterImage,
+  setIsSuccess,
+  setNotificationMessage,
+}) => {
   const axiosPrivate = useAxiosPrivate();
   const [files, setFiles] = useState([]);
   const handleChange = (e) => {
@@ -33,9 +38,13 @@ const PostChapterImage = ({ chapterId, setIsInsertChapterImage }) => {
       console.log(data);
       setFiles([]);
       setIsInsertChapterImage(false);
+      setIsSuccess(true);
+      setNotificationMessage("Chapter image inserted successfully!");
       console.log("Chapter image inserted successfully!");
     } catch (error) {
       console.error("Error inserting chapter image:", error);
+      setIsSuccess(false);
+      setNotificationMessage("Failed to insert chapter image.");
     }
   };
 

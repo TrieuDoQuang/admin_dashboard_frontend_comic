@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import axios from "../../api/axios";
-import { Button } from "../../components";
 import { useAxiosPrivate } from "../../hooks";
 
 const User = () => {
@@ -24,8 +23,6 @@ const User = () => {
   }, []);
   return (
     <div className="overflow-y: scroll">
-      <Button content={"Add User"} />
-
       <div className="relative max-h-screen shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase  bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
@@ -47,12 +44,6 @@ const User = () => {
               </th>
               <th scope="col" className="px-6 py-3 text-white">
                 Username
-              </th>
-              <th scope="col" className="px-6 py-3">
-                <span className="sr-only">Edit</span>
-              </th>
-              <th scope="col" className="px-6 py-3">
-                <span className="sr-only">Go to chapter</span>
               </th>
             </tr>
           </thead>
@@ -77,23 +68,6 @@ const User = () => {
                   }`}</td>
                   <td className="px-6 py-4">{user.role}</td>
                   <td className="px-6 py-4">{user.username}</td>
-
-                  <td className="px-6 py-4 text-right">
-                    <a
-                      href="#"
-                      className="font-medium text-green-400 hover:text-white "
-                    >
-                      Edit
-                    </a>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <a
-                      href="#"
-                      className="font-medium text-green-400  hover:text-white"
-                    >
-                      Delete
-                    </a>
-                  </td>
                 </tr>
               ))}
           </tbody>

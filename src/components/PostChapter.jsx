@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { useAxiosPrivate } from "../hooks";
 import axios from "../api/axios";
 
-const PostChapter = ({ comicId, setIsInsertChapter, fetchChapters }) => {
+const PostChapter = ({
+  comicId,
+  setIsInsertChapter,
+  fetchChapters,
+  setIsSuccess,
+  setNotificationMessage,
+}) => {
   const axiosPrivate = useAxiosPrivate();
   const [chapter, setChapter] = useState({
     chapterTitle: "",
@@ -48,8 +54,12 @@ const PostChapter = ({ comicId, setIsInsertChapter, fetchChapters }) => {
       setIsInsertChapter(false);
       fetchChapters();
       fetchLatestChapters();
+      setIsSuccess(true);
+      setNotificationMessage("Chapter inserted successfully!");
     } catch (error) {
       console.error("Error inserting chapter:", error);
+      setIsSuccess(false);
+      setNotificationMessage("Failed to insert chapter.");
     }
   };
   console.log(chapter);

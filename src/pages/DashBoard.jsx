@@ -1,9 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { ComicItem } from "../components";
 import axios from "../api/axios";
+import { SearchContext } from "../contexts";
 const DashBoard = () => {
+  const { searchValue } = useContext(SearchContext);
+
   const [comics, setComics] = useState([]);
 
+  const filteredComics =
+    searchValue && searchValue.length > 0 ? searchValue : comics;
   useEffect(() => {
     const fetchComics = async () => {
       try {
@@ -23,7 +28,7 @@ const DashBoard = () => {
         TOP 3 COMIC ON A MONTH
       </div>
       <div>
-        <ComicItem comics={comics} />
+        <ComicItem comics={filteredComics} />
       </div>
     </div>
   );

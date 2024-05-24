@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useAxiosPrivate } from "../hooks";
-
 const PostComic = ({
   setIsInsertComic,
   setIsSuccess,
@@ -14,11 +13,9 @@ const PostComic = ({
     description: "",
     imageData: null,
   });
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitted(false); // Reset isSubmitted before starting the submission
     const postComic = new FormData();
     postComic.append("name", comic.name);
     postComic.append("author", comic.author);
@@ -37,7 +34,6 @@ const PostComic = ({
       );
       setIsSuccess(true); // Set isSuccess to true when the comic is posted successfully
       setNotificationMessage("Comic inserted successfully!");
-      setIsSubmitted(true); // Set isSubmitted to true after the submission is complete
       setComic({
         name: "",
         author: "",
@@ -49,7 +45,6 @@ const PostComic = ({
     } catch (error) {
       setIsSuccess(false);
       setNotificationMessage("Failed to insert comic.");
-      setIsSubmitted(true); // Set isSubmitted to true after the submission is complete
     }
   };
 

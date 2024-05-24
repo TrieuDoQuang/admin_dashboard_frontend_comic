@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import axios from "../../api/axios";
 import { Button } from "../../components";
-import { useAxiosPrivate } from "../../hooks";
+import { useAxiosPrivate, useDebounce } from "../../hooks";
+import { Notification } from "../../components";
 
 const Comment = () => {
   const [comments, setComments] = useState([]);
+  const [isSuccessComment, setIsSuccessComment] = useState(null);
   const axiosPrivate = useAxiosPrivate();
 
   const fetchComments = async () => {
@@ -32,8 +34,10 @@ const Comment = () => {
       );
       console.log("Comment deleted successfully!");
       fetchComments();
+      setIsSuccessComment(true);
     } catch (error) {
       console.error("Error deleting comment:", error);
+      setIsSuccessComment(false);
     }
   };
 
@@ -91,6 +95,11 @@ const Comment = () => {
           </tbody>
         </table>
       </div>
+      {isSuccessComment === true ? (
+        <Notification successMessage="Comment deleted successfully!" />
+      ) : isSuccessComment === false ? (
+        <Notification errorMessage="Error deleting comment!" />
+      ) : null}
     </div>
   );
 };

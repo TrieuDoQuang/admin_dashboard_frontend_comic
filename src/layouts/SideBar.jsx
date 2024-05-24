@@ -60,6 +60,18 @@ const SideBar = () => {
             </button>
           </Link>
         </li>
+        <li>
+          <Link to={`/genre`} onClick={() => setActiveLink("/genre")}>
+            <button
+              className={`mt-4 w-full transform transition hover:scale-105 hover:bg-slate-500 duration-300 ease-in-out cursor-pointer ${
+                activeLink === "/genre" ? "bg-gray-500 text-green-300" : ""
+              } p-2`}
+              type="submit"
+            >
+              Genre
+            </button>
+          </Link>
+        </li>
       </ul>
     </div>
   );

@@ -1,16 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "../../api/axios";
 import { useAxiosPrivate } from "../../hooks";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Notification, PostComic } from "../../components";
+import { Button, Notification, PostComic, UpdateComic } from "../../components";
 import { Link } from "react-router-dom";
+import { SearchContext } from "../../contexts";
+
 const Comic = () => {
   const axiosPrivate = useAxiosPrivate();
   const [comics, setComics] = useState([]);
+  const [comicUpdate, setComicUpdate] = useState(null);
   const [isInsertComic, setIsInsertComic] = useState(false);
+  const [isUpdateComic, setIsUpdateComic] = useState(false);
   const [isSuccess, setIsSuccess] = useState(null);
   const [notificationMessage, setNotificationMessage] = useState("");
+
+  const { searchValue } = useContext(SearchContext);
 
   const fetchComics = async () => {
     try {
@@ -18,7 +24,6 @@ const Comic = () => {
         "http://comic.pantech.vn:8080/api/comic/getAllComics"
       );
       const data = response?.data?.result;
-
       console.log(data);
       setComics(data);
     } catch (error) {
@@ -35,6 +40,11 @@ const Comic = () => {
     fetchComics();
   };
 
+  const handleUpdate = (comic) => {
+    setIsUpdateComic(true);
+    setComicUpdate(comic);
+  };
+
   const handleDelete = async (id) => {
     try {
       await axiosPrivate.delete(
@@ -43,16 +53,31 @@ const Comic = () => {
       setIsSuccess(true);
       setNotificationMessage("Comic deleted successfully!");
       fetchComics();
+      // resetNotification();
     } catch (error) {
       setIsSuccess(false);
       setNotificationMessage("Failed to delete comic.");
       console.error("Error deleting comic:", error);
+      // resetNotification();
     }
   };
+
+  useEffect(() => {
+    if (notificationMessage) {
+      const timer = setTimeout(() => {
+        setNotificationMessage("");
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [notificationMessage]);
+
+  const filteredComics =
+    searchValue && searchValue.length > 0 ? searchValue : comics;
 
   return (
     <div>
       <Button content={"Add Comic"} onClick={handleInsertComic} />
+
       <div className="relative max-h-screen shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
@@ -87,58 +112,60 @@ const Comic = () => {
             </tr>
           </thead>
           <tbody>
-            {comics &&
-              comics.map((comic) => (
-                <tr
-                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
-                  key={comic.id}
+            {filteredComics.map((comic) => (
+              <tr
+                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                key={comic.id}
+              >
+                <th
+                  scope="row"
+                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                 >
-                  <th
-                    scope="row"
-                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  {comic.name}
+                </th>
+                <td className="px-6 py-4">{comic.author}</td>
+                <td className="px-6 py-4">{comic.description}</td>
+                <td className="px-6 py-4">
+                  <div className="flex flex-col">
+                    {comic.genres.map((genre) => (
+                      <div key={genre.id}>{genre.name}</div>
+                    ))}
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div
+                    className="w-20 h-20 bg-contain bg-no-repeat bg-center rounded-sm"
+                    style={{ backgroundImage: `url(${comic.thumbnailUrl})` }}
+                  ></div>
+                </td>
+                <td className="px-6 py-4">{comic.view}</td>
+                <td className="px-6 py-4">
+                  {comic.deleted ? "Deleted" : "Not Deleted"}
+                </td>
+                <td className="px-6 py-4">
+                  {comic.finished ? "Finished" : "Not Finished"}
+                </td>
+                <td className="px-6 py-4 flex flex-col justify-between gap-4 text-right">
+                  <button
+                    className="font-medium hover:text-white text-green-400"
+                    onClick={() => handleUpdate(comic)}
                   >
-                    {comic.name}
-                  </th>
-                  <td className="px-6 py-4">{comic.author}</td>
-                  <td className="px-6 py-4">{comic.description}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col">
-                      {comic.genres.map((genre) => (
-                        <div key={genre.id}>{genre.name}</div>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div
-                      className="w-20 h-20 bg-contain bg-no-repeat bg-center rounded-sm"
-                      style={{ backgroundImage: `url(${comic.thumbnailUrl})` }}
-                    ></div>
-                  </td>
-                  <td className="px-6 py-4">{comic.view}</td>
-                  <td className="px-6 py-4">
-                    {comic.deleted ? "Deleted" : "Not Deleted"}
-                  </td>
-                  <td className="px-6 py-4">
-                    {comic.finished ? "Finished" : "Not Finished"}
-                  </td>
-                  <td className="px-6 py-4 flex flex-col justify-between gap-4 text-right">
+                    Edit
+                  </button>
+                  <Link to={`/comic/${comic.name}/chapter/${comic.id}`}>
                     <button className="font-medium hover:text-white text-green-400">
-                      Edit
+                      Go to chapter
                     </button>
-                    <Link to={`/comic/${comic.name}/chapter/${comic.id}`}>
-                      <button className="font-medium hover:text-white text-green-400">
-                        Go to chapter
-                      </button>
-                    </Link>
-                    <button
-                      className="font-medium hover:text-white text-green-400"
-                      onClick={() => handleDelete(comic.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                  </Link>
+                  <button
+                    className="font-medium hover:text-white text-green-400"
+                    onClick={() => handleDelete(comic.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -154,6 +181,26 @@ const Comic = () => {
             className="fixed top-5 right-10 text-2xl font-bold text-[#fff] cursor-pointer hover:text-red-700"
             onClick={() => {
               setIsInsertComic(false);
+            }}
+          >
+            <FontAwesomeIcon icon={faTimes} />
+          </div>
+        </div>
+      )}
+
+      {isUpdateComic && (
+        <div className="fixed z-1000 inset-0 bg-opacity-50 bg-black">
+          <UpdateComic
+            setIsUpdateComic={setIsUpdateComic}
+            setIsSuccess={setIsSuccess}
+            setNotificationMessage={setNotificationMessage}
+            comic={comicUpdate}
+            fetchComics={fetchComics}
+          />
+          <div
+            className="fixed top-5 right-10 text-2xl font-bold text-[#fff] cursor-pointer hover:text-red-700"
+            onClick={() => {
+              setIsUpdateComic(false);
             }}
           >
             <FontAwesomeIcon icon={faTimes} />

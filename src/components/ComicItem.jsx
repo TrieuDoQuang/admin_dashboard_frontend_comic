@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const ComicItem = ({ comics }) => {
   return (
-    <div className="grid overflow-x-auto overflow-auto max-h-screen grid-cols-3 gap-3 ml-5 p-5">
+    <div className="grid max-h-screen grid-cols-3 gap-3 ml-5 p-5">
       {comics &&
         comics.map((comic) => (
           <Link
@@ -22,14 +22,14 @@ const ComicItem = ({ comics }) => {
               <div className="text-lg text-center hover:font-bold">
                 Author: {comic.author}
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-row flex-wrap gap-2">
                 <div className="text-xl font-bold">Genre:</div>
                 {comic.genres.map((genre) => (
                   <div
                     key={genre.id}
                     className="text-lg text-center flex flex-row hover:font-bold"
                   >
-                    <div> {genre.name}</div>
+                    <div>{genre.name}</div>
                   </div>
                 ))}
               </div>

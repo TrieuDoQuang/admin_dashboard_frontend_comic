@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
 
   console.log("is login", isLoggedIn);
   console.log("persist", persist);
+  console.log("auth", auth);
 
   return (
     <AuthContext.Provider

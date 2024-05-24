@@ -4,10 +4,12 @@ import axios from "../api/axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate, useLocation } from "react-router-dom";
 import images from "../assets/images";
+import { Notification } from "../components";
+
 const Login = () => {
   const { setAuth, setIsLoggedIn, persist, setPersist } = useAuth();
-  const userRef = useRef();
-  const errRef = useRef();
+
+  const [isError, setIsError] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,7 +50,8 @@ const Login = () => {
       console.log(decodedToken?.sub);
       console.log(accessToken);
       // Set authentication state
-      const authData = { username: userName, accessToken };
+      const authData = { accessToken };
+      console.log(authData);
       setAuth(authData);
       setPassword("");
       setUserName("");
@@ -56,14 +59,22 @@ const Login = () => {
       navigate(from, { replace: true }); // Redirect after successful login
       decodedToken?.sub === "admin"
         ? navigate("/dashboard")
-        : navigate("/unauthorized") &&
-          localStorage.removeItem("token", response?.data?.result?.token) &&
-          setIsLoggedIn(false);
+        : navigate("/unauthorized");
     } catch (err) {
       console.error("Login error:", err);
       setIsLoggedIn(false); // Ensure user is not logged in on login failure
+      setIsError(true);
     }
   };
+
+  useEffect(() => {
+    if (isError) {
+      const timer = setTimeout(() => {
+        setIsError(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isError]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -135,6 +146,7 @@ const Login = () => {
           </div>
         </div>
       </form>
+      {isError && <Notification errorMessage={"Wrong username or password"} />}
     </div>
   );
 };

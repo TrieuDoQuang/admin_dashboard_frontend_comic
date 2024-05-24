@@ -1,6 +1,15 @@
-import React from "react";
+import { useEffect } from "react";
+import { useAuth } from "../hooks";
 
 const Unauthorized = () => {
+  const { auth, setIsLoggedIn } = useAuth();
+  console.log(auth.accessToken);
+
+  useEffect(() => {
+    localStorage.removeItem("token", auth.accessToken);
+    setIsLoggedIn(false);
+  }, []);
+
   return (
     <div>
       <section className="relative z-10 bg-primary py-[120px]">

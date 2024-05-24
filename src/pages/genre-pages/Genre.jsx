@@ -2,17 +2,20 @@ import { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { Button } from "../../components";
 import { useAxiosPrivate } from "../../hooks";
-import { PostGenre } from "../../components";
+import { PostGenre, PostGenreToComic } from "../../components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Notification } from "../../components";
+
 const Genre = () => {
   const [genres, setGenres] = useState([]);
   const [isInsertGenre, setIsInsertGenre] = useState(false);
+  const [isInsertGenreToComic, setIsInsertGenreToComic] = useState(false);
   const axiosPrivate = useAxiosPrivate();
   const [isSuccess, setIsSuccess] = useState(null);
   const [notificationMessage, setNotificationMessage] = useState("");
 
+  const [genreComic, setGenreComic] = useState({});
   const fetchGenres = async () => {
     try {
       const response = await axios.get(
@@ -31,6 +34,11 @@ const Genre = () => {
 
   const handleInsertGenre = () => {
     setIsInsertGenre(true);
+  };
+
+  const handleInsertGenreToComic = (genreId, genreName) => {
+    setIsInsertGenreToComic(true);
+    setGenreComic({ id: genreId, name: genreName });
   };
 
   useEffect(() => {
@@ -80,7 +88,9 @@ const Genre = () => {
                   <td className="px-6 py-4 text-right">
                     <button
                       className="font-medium hover:text-white text-green-400"
-                      //   onClick={() => handleDelete(comment.id)}
+                      onClick={() =>
+                        handleInsertGenreToComic(genre.id, genre.name)
+                      }
                     >
                       Add genre to comic
                     </button>
@@ -102,6 +112,25 @@ const Genre = () => {
             className="fixed top-5 right-10 text-2xl font-bold text-[#fff] cursor-pointer hover:text-red-700"
             onClick={() => {
               setIsInsertGenre(false);
+            }}
+          >
+            <FontAwesomeIcon icon={faTimes} />
+          </div>
+        </div>
+      )}
+
+      {isInsertGenreToComic && (
+        <div className="fixed z-1000 inset-0 bg-opacity-50 bg-black">
+          <PostGenreToComic
+            setIsInsertGenreToComic={setIsInsertGenreToComic}
+            setIsSuccess={setIsSuccess}
+            genreComic={genreComic}
+            setNotificationMessage={setNotificationMessage}
+          />
+          <div
+            className="fixed top-5 right-10 text-2xl font-bold text-[#fff] cursor-pointer hover:text-red-700"
+            onClick={() => {
+              setIsInsertGenreToComic(false);
             }}
           >
             <FontAwesomeIcon icon={faTimes} />

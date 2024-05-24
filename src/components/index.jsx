@@ -9,3 +9,4 @@ export { default as UpdateChapter } from "./UpdateChapter";
 export { default as UpdateComic } from "./UpdateComic";
 export { default as PostChapterImage } from "./PostChapterImage";
 export { default as PostGenre } from "./PostGenre";
+export { default as PostGenreToComic } from "./PostGenreToComic";

@@ -4,12 +4,13 @@ import useAuth from "./useAuth";
 import useRefreshToken from "./useRefreshToken";
 const useAxiosPrivate = () => {
   const { auth } = useAuth();
+  const token = localStorage.getItem("token");
   const refresh = useRefreshToken();
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config) => {
         if (!config.headers["Authorization"]) {
-          config.headers["Authorization"] = `Bearer ${auth?.accessToken}`;
+          config.headers["Authorization"] = `Bearer ${token}`;
         }
         return config;
       },
@@ -34,7 +35,7 @@ const useAxiosPrivate = () => {
       axiosPrivate.interceptors.request.eject(requestIntercept);
       axiosPrivate.interceptors.response.eject(responseIntercept);
     };
-  }, [auth, refresh]);
+  }, [token, refresh]);
   return axiosPrivate;
 };
 

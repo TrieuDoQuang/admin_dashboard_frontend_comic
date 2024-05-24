@@ -51,11 +51,12 @@ const Header = () => {
   }, [debouncedValue]);
 
   const handleSubmitLogOut = async (e) => {
+    const token = localStorage.getItem("token");
     e.preventDefault();
     try {
       await axios.post(
         "http://comic.pantech.vn:8080/api/auth/logout",
-        { token: `${auth?.accessToken}` },
+        { token: `${token}` },
         { headers: { "Content-Type": "application/json" } }
       );
       localStorage.clear();

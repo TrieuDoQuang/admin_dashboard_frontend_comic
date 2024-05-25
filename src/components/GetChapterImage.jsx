@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from "react";
 import { useAxiosPrivate } from "../hooks";
-const GetChapterImage = memo(() => {
+const GetChapterImage = memo(({ chapterId }) => {
   const [chapterImage, setChapterImage] = useState([]);
 
   const axiosPrivate = useAxiosPrivate();
@@ -8,7 +8,7 @@ const GetChapterImage = memo(() => {
   const fetchChapterImage = async () => {
     try {
       const response = await axiosPrivate.get(
-        "http://comic.pantech.vn:8080/api/chapter/getChapter/1"
+        `http://comic.pantech.vn:8080/api/chapter/getChapter/${chapterId}`
       );
       const data = response?.data?.result.imageUrls;
       console.log(data);

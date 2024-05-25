@@ -69,6 +69,11 @@ const Chapter = () => {
     setIsUpdateChapter(true);
   };
 
+  const handleGetChapterImage = (chapterId) => {
+    setSelectedChapterId(chapterId);
+    setIsGetChapterImage(true);
+  };
+
   const handleDeleteChapterImage = async (chapterId) => {
     try {
       await axiosPrivate.delete(
@@ -167,7 +172,7 @@ const Chapter = () => {
                   <td className="px-6 py-4">
                     <button
                       className="font-medium  hover:text-white text-green-400"
-                      onClick={() => setIsGetChapterImage(true)}
+                      onClick={() => handleGetChapterImage(chapter.id)}
                     >
                       Preview Chapter Image
                     </button>
@@ -240,7 +245,7 @@ const Chapter = () => {
 
       {isGetChapterImage && (
         <div className="fixed z-9999 inset-0 bg-opacity-50 bg-black flex items-center justify-center">
-          <GetChapterImage />
+          <GetChapterImage chapterId={selectedChapterId} />
           <div
             className="fixed top-5 right-10 text-2xl font-bold text-[#fff] cursor-pointer hover:text-red-700"
             onClick={() => {

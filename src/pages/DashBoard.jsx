@@ -25,7 +25,7 @@ const DashBoard = () => {
   return (
     <div className="max-h-screen">
       <div className="text-2xl text-center mt-5 font-bold text-green-400">
-        TOP 3 COMIC ON A MONTH
+        3 MOST VIEW COMICS
       </div>
       <div>
         <ComicItem comics={filteredComics} />

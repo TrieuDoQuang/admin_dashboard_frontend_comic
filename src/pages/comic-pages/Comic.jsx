@@ -62,6 +62,21 @@ const Comic = () => {
     }
   };
 
+  const handleChangeFinished = async (id) => {
+    try {
+      await axiosPrivate.put(
+        `http://comic.pantech.vn:8080/api/comic/setIsFinished/${id}`
+      );
+      setIsSuccess(true);
+      setNotificationMessage("Changed status of comic successfully!");
+      fetchComics();
+    } catch (error) {
+      setIsSuccess(false);
+      setNotificationMessage("Failed to set finish comic.");
+      console.error("Error finishing comic:", error);
+    }
+  };
+
   useEffect(() => {
     if (notificationMessage) {
       const timer = setTimeout(() => {
@@ -144,7 +159,14 @@ const Comic = () => {
                 </td>
                 <td className="px-6 py-4">
                   {comic.finished ? "Finished" : "Not Finished"}
+                  <button
+                    className="font-medium hover:text-white text-green-400"
+                    onClick={() => handleChangeFinished(comic.id)}
+                  >
+                    Change
+                  </button>
                 </td>
+
                 <td className="px-6 py-4 flex flex-col justify-between gap-4 text-right">
                   <button
                     className="font-medium hover:text-white text-green-400"

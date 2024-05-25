@@ -46,12 +46,8 @@ const Login = () => {
       // Decode token
       const accessToken = response?.data?.result?.token;
       const decodedToken = jwtDecode(accessToken); // Correct usage of jwtDecode
-      console.log(decodedToken);
-      console.log(decodedToken?.sub);
-      console.log(accessToken);
       // Set authentication state
       const authData = { accessToken };
-      console.log(authData);
       setAuth(authData);
       setPassword("");
       setUserName("");

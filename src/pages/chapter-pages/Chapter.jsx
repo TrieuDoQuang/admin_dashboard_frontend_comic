@@ -45,9 +45,14 @@ const Chapter = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axiosPrivate.delete(
+      const response = await axiosPrivate.delete(
         `http://comic.pantech.vn:8080/api/chapter/deleteChapter/${id}`
       );
+      if (response.data.code !== 200) {
+        setIsSuccess(false);
+        setNotificationMessage(response.data.message);
+        throw new Error(response.data.message);
+      }
       console.log("Chapter deleted successfully!");
       setIsSuccess(true);
       setNotificationMessage("Chapter deleted successfully!");
@@ -55,7 +60,11 @@ const Chapter = () => {
     } catch (error) {
       console.error("Error deleting chapter:", error);
       setIsSuccess(false);
-      setNotificationMessage("Failed to delete chapter.");
+      if (error) {
+        setNotificationMessage(error.response.data.message);
+      } else {
+        setNotificationMessage("Failed to delete chapter.");
+      }
     }
   };
 

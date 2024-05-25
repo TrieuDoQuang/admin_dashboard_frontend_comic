@@ -44,6 +44,13 @@ const PostChapter = ({
           comicId: comicId,
         }
       );
+
+      if (response.data.code !== 200) {
+        setIsSuccess(false);
+        setNotificationMessage(response.data.message);
+        throw new Error(response.data.message);
+      }
+
       const data = response?.data?.result;
       console.log(data);
       setChapter({
@@ -59,7 +66,12 @@ const PostChapter = ({
     } catch (error) {
       console.error("Error inserting chapter:", error);
       setIsSuccess(false);
-      setNotificationMessage("Failed to insert chapter.");
+      setIsSuccess(false);
+      if (error) {
+        setNotificationMessage(error.response.data.message);
+      } else {
+        setNotificationMessage("Failed to delete chapter.");
+      }
     }
   };
   console.log(chapter);

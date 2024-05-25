@@ -5,12 +5,13 @@ import {
   PostChapter,
   PostChapterImage,
   UpdateChapter,
+  Notification,
+  GetChapterImage,
 } from "../../components";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "../../api/axios";
 import { useAxiosPrivate } from "../../hooks";
-import { Notification } from "../../components";
 
 const Chapter = () => {
   const [chapters, setChapters] = useState([]);
@@ -20,6 +21,7 @@ const Chapter = () => {
   const [isInsertChapterImage, setIsInsertChapterImage] = useState(false);
   const [selectedChapterId, setSelectedChapterId] = useState(null);
   const [isSuccess, setIsSuccess] = useState(null);
+  const [isGetChapterImage, setIsGetChapterImage] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
 
   const { comicId } = useParams();
@@ -110,13 +112,13 @@ const Chapter = () => {
                 Chapter Number
               </th>
               <th scope="col" className="px-6 py-3 font-bold text-white">
-                Image Urls
-              </th>
-              <th scope="col" className="px-6 py-3 font-bold text-white">
                 Created At
               </th>
               <th scope="col" className="px-6 py-3 font-bold text-white">
-                <span className="sr-only">Edit</span>
+                <span className="sr-only"></span>
+              </th>
+              <th scope="col" className="px-6 py-3 font-bold text-white">
+                <span className="sr-only"></span>
               </th>
             </tr>
           </thead>
@@ -133,9 +135,7 @@ const Chapter = () => {
                   >
                     {chapter.title}
                   </th>
-                  {/* <td className="px-6 py-4">{chapter.title}</td> */}
                   <td className="px-6 py-4">{chapter.chapterNumber}</td>
-                  <td className="px-6 py-4">{chapter.imageUrls}</td>
                   <td className="px-6 py-4">{chapter.createdAt}</td>
                   <td className="px-6 py-4 flex flex-col justify-between gap-4  text-right">
                     <button
@@ -162,6 +162,14 @@ const Chapter = () => {
                       onClick={() => handleDeleteChapterImage(chapter.id)}
                     >
                       Delete chapter image
+                    </button>
+                  </td>
+                  <td className="px-6 py-4">
+                    <button
+                      className="font-medium  hover:text-white text-green-400"
+                      onClick={() => setIsGetChapterImage(true)}
+                    >
+                      Preview Chapter Image
                     </button>
                   </td>
                 </tr>
@@ -210,7 +218,7 @@ const Chapter = () => {
       )}
 
       {isUpdateChapter && (
-        <div className="fixed z-9999 inset-0 bg-opacity-50 bg-black">
+        <div className="fixed  z-9999 inset-0 bg-opacity-50 bg-black">
           <UpdateChapter
             chapter={chapterUpdate}
             setIsUpdateChapter={setIsUpdateChapter}
@@ -223,6 +231,20 @@ const Chapter = () => {
             className="fixed top-5 right-10 text-2xl font-bold text-[#fff] cursor-pointer hover:text-red-700"
             onClick={() => {
               setIsUpdateChapter(false);
+            }}
+          >
+            <FontAwesomeIcon icon={faTimes} />
+          </div>
+        </div>
+      )}
+
+      {isGetChapterImage && (
+        <div className="fixed z-9999 inset-0 bg-opacity-50 bg-black flex items-center justify-center">
+          <GetChapterImage />
+          <div
+            className="fixed top-5 right-10 text-2xl font-bold text-[#fff] cursor-pointer hover:text-red-700"
+            onClick={() => {
+              setIsGetChapterImage(false);
             }}
           >
             <FontAwesomeIcon icon={faTimes} />

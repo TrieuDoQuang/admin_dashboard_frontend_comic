@@ -35,7 +35,7 @@ const GetChapterImage = memo(({ chapterId }) => {
                   key={index}
                   src={`${image}`}
                   alt={`Chapter Image ${index}`}
-                  className="w-full h-[800px] object-cover"
+                  className="w-full h-full object-cover"
                 />
               ))}
           </div>
